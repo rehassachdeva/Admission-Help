@@ -9,6 +9,8 @@ from django.contrib import admin
 from django.views.i18n import JavaScriptCatalog
 from machina.app import board
 
+from . import views
+
 
 js_info_dict = {
     'packages': ('base', ),
@@ -21,6 +23,8 @@ urlpatterns = [
     url(r'^' + settings.ADMIN_URL, admin.site.urls),
 
     # Apps
+    
+    url(r'home/', views.HomePageView.as_view(), name='home-page'),
     url(r'', include('example.apps.auth.urls')),
     url(r'', include(board.urls)),
 ]

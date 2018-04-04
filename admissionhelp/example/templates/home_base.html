@@ -1,0 +1,55 @@
+{% extends MACHINA_BASE_TEMPLATE_NAME %}
+{% load static %}
+{% load i18n %}
+{% load forum_permission_tags %}
+
+{% block title %}{{ "Admission Help"|default:"Forum" }} {% endblock title %}
+
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+<link rel="stylesheet" href="{% static 'css/machina.board_theme.vendor.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/machina.board_theme.min.css' %}" />
+{% endblock css %}
+
+{% block body %}
+{% block header %}
+<div class="navbar-fixed-top-spacing">&nbsp;</div>
+<div class="navbar navbar-default navbar-fixed-top machina-navbar" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Admission Help</a>
+    </div>
+    <div class="collapse navbar-collapse">
+      {% block header_collapse %}
+
+      {% endblock header_collapse %}
+    </div>
+  </div>
+</div>
+{% endblock header %}
+
+{% endblock body %}
+
+{% block js %}
+{{ block.super }}
+      <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+      <script src="{% static 'assets/js/jquery.scrollex.min.js' %}"></script>
+      <script src="{% static 'assets/js/skel.min.js' %}"></script>
+      <script src="{% static 'assets/js/util.js' %}"></script>
+      <script src="{% static 'assets/js/main.js' %}"></script>
+<script src="{% static 'js/machina.packages.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static 'js/machina.min.js' %}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+  $(function() {
+    machina.init();
+    {% block onbodyload %}{% endblock onbodyload %}
+  });
+</script>
+{% endblock js %}
