@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load forum_permission_tags %}
 
-{% block title %}{{ MACHINA_FORUM_NAME|default:"Forum" }} &mdash; {% block sub_title %}{% endblock sub_title %}{% endblock title %}
+{% block title %}{{ "Admission Help"|default:"Forum" }} {% endblock title %}
 
 {% block css %}
 {{ block.super }}
@@ -23,7 +23,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/">django-machina</a>
+      <a class="navbar-brand" href="/">Admission Help</a>
     </div>
     <div class="collapse navbar-collapse">
       {% block header_collapse %}
