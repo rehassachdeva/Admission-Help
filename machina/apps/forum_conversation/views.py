@@ -12,6 +12,7 @@ from django.views.generic import DeleteView
 from django.views.generic import FormView
 from django.views.generic import ListView
 from django.views.generic.detail import SingleObjectMixin
+from django_mysql.models import SetTextField
 
 from machina.apps.forum_conversation.signals import topic_viewed
 from machina.apps.forum_conversation.utils import get_client_ip
@@ -19,6 +20,13 @@ from machina.conf import settings as machina_settings
 from machina.core.db.models import get_model
 from machina.core.loading import get_class
 
+import re
+
+from nltk.corpus import stopwords
+stop_words = stopwords.words('english') + [""]
+
+from nltk.stem.porter import PorterStemmer
+porter = PorterStemmer()
 
 Attachment = get_model('forum_attachments', 'Attachment')
 Forum = get_model('forum', 'Forum')
@@ -129,6 +137,7 @@ class BasePostFormView(FormView):
     approval_required_message = _('This message will be validated before appearing on the forum.')
     attachment_formset_general_error_message = _(
         'There are some errors in the attachments you submitted.')
+    duplicate_error_message = _('Post was not created as it was detected as duplicate.')
 
     def get(self, request, *args, **kwargs):
         self.init_attachment_cache()
@@ -144,11 +153,47 @@ class BasePostFormView(FormView):
                 post_form=post_form,
                 attachment_formset=attachment_formset))
 
+    def clean_text(self, text):
+        if not text:
+            return {}
+        text = text.lower()
+        words = re.split(r'\W+', text)
+        words = [w for w in words if not w in stop_words]
+        stemmed = [porter.stem(word) for word in words]
+        return {token for token in stemmed}
+
+    def compute_jaccard_similarity(self, tokens1, tokens2):
+        if tokens1 is None or tokens2 is None:
+            return 0
+        intersection = tokens1 & tokens2
+        union = tokens1 | tokens2
+        return len(intersection) / len(union)
+
     def post(self, request, *args, **kwargs):
         self.init_attachment_cache()
 
         # Stores a boolean indicating if we are considering a preview
         self.preview = 'preview' in self.request.POST
+
+        text = self.request.POST['content']
+        self.tokens = self.clean_text(text)
+        self.duplicate = False
+
+        forum = self.get_forum()
+        topics = forum.topics.all()
+        for topic in topics:
+            if hasattr(topic, "tokens"):
+                topic_tokens = topic.tokens
+                jsm = self.compute_jaccard_similarity(topic_tokens, self.tokens)
+                if jsm > 0.7:
+                    self.duplicate = True
+            posts = topic.posts.all()
+            for post in posts:
+                if hasattr(post, "tokens"):
+                    post_tokens = post.tokens
+                    jsm = self.compute_jaccard_similarity(post_tokens, self.tokens)
+                    if jsm > 0.7:
+                        self.duplicate = True
 
         # Initializes the forms
         post_form_class = self.get_post_form_class()
@@ -160,6 +205,9 @@ class BasePostFormView(FormView):
             and attachment_formset.is_valid() else None
 
         post_form_valid = post_form.is_valid()
+        if self.duplicate == True:
+            post_form_valid = False
+
         if (post_form_valid and attachment_formset is None) or \
                 (post_form_valid and attachment_formset.is_valid()):
             return self.form_valid(post_form, attachment_formset)
@@ -345,8 +393,11 @@ class BasePostFormView(FormView):
                     post_form=post_form,
                     attachment_formset=attachment_formset, **kwargs))
 
+        if "tokens" in kwargs:
+            self.tokens = kwargs.get("tokens")
+
         # This is not a preview ; the object is going to be saved
-        self.forum_post = post_form.save()
+        self.forum_post = post_form.save(tokens=self.tokens)
 
         if save_attachment_formset:
             attachment_formset.post = self.forum_post
@@ -363,6 +414,11 @@ class BasePostFormView(FormView):
         Called if one of the forms is invalid. Re-renders the context data with
         the data-filled forms and errors.
         """
+        if "duplicate" in kwargs:
+            self.duplicate = kwargs.get("duplicate")
+
+        if self.duplicate == True:
+            messages.error(self.request, self.duplicate_error_message)
         if attachment_formset and not attachment_formset.is_valid() \
                 and len(attachment_formset.errors):
             messages.error(
@@ -409,6 +465,25 @@ class BaseTopicFormView(BasePostFormView):
 
         # Stores a boolean indicating if we are considering a preview
         self.preview = 'preview' in self.request.POST
+        text = self.request.POST['content']
+        self.tokens = self.clean_text(text)
+        self.duplicate = False
+
+        forum = self.get_forum()
+        topics = forum.topics.all()
+        for topic in topics:
+            if hasattr(topic, "tokens"):
+                topic_tokens = topic.tokens
+                jsm = self.compute_jaccard_similarity(topic_tokens, self.tokens)
+                if jsm > 0.7:
+                    self.duplicate = True            
+            posts = topic.posts.all()
+            for post in posts:
+                if hasattr(post, "tokens"):
+                    post_tokens = post.tokens
+                    jsm = self.compute_jaccard_similarity(post_tokens, self.tokens)
+                    if jsm > 0.7:
+                        self.duplicate = True
 
         # Initializes the forms
         post_form_class = self.get_post_form_class()
@@ -419,6 +494,9 @@ class BaseTopicFormView(BasePostFormView):
         poll_option_formset = self.get_poll_option_formset(poll_option_formset_class)
 
         post_form_valid = post_form.is_valid()
+        if self.duplicate:
+            post_form_valid = False
+
         attachment_formset_valid = attachment_formset.is_valid() if attachment_formset \
             else None
         poll_option_formset_valid = poll_option_formset.is_valid() if poll_option_formset \
@@ -427,7 +505,8 @@ class BaseTopicFormView(BasePostFormView):
         self.attachment_preview = self.preview if attachment_formset_valid else None
         self.poll_preview = self.preview if poll_option_formset_valid else None
 
-        poll_options_validated = poll_option_formset_valid is not None
+        poll_options_validated = poll_option_formset_valid is not None           
+
         if post_form_valid and attachment_formset_valid is not False \
                 and poll_option_formset_valid is not False:
             return self.form_valid(
@@ -492,7 +571,7 @@ class BaseTopicFormView(BasePostFormView):
             and not self.preview
 
         valid = super(BaseTopicFormView, self).form_valid(
-            post_form, attachment_formset, poll_option_formset=poll_option_formset, **kwargs)
+            post_form, attachment_formset, poll_option_formset=poll_option_formset, tokens=self.tokens, **kwargs)
 
         if save_poll_option_formset:
             poll_option_formset.topic = self.forum_post.topic
@@ -512,7 +591,7 @@ class BaseTopicFormView(BasePostFormView):
             messages.error(self.request, self.poll_option_formset_general_error_message)
 
         return super(BaseTopicFormView, self).form_invalid(
-            post_form, attachment_formset, poll_option_formset=poll_option_formset, **kwargs)
+            post_form, attachment_formset, poll_option_formset=poll_option_formset, duplicate=self.duplicate, **kwargs)
 
 
 class PostFormView(SingleObjectMixin, BasePostFormView):

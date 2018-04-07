@@ -10,6 +10,7 @@ from django.utils.encoding import force_text
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
+from django_mysql.models import SetTextField
 
 from machina.conf import settings as machina_settings
 from machina.core import validators
@@ -36,6 +37,8 @@ class AbstractTopic(DatedModel):
     # The subject of the thread should correspond to the one associated with the first post
     subject = models.CharField(max_length=255, verbose_name=_('Subject'))
     slug = models.SlugField(max_length=255, verbose_name=_('Slug'))
+
+    tokens = SetTextField(base_field=models.CharField(max_length=255), null=True)    
 
     # Sticky, Announce, Global topic or Default topic ; that's what a topic can be
     TOPIC_POST, TOPIC_STICKY, TOPIC_ANNOUNCE = 0, 1, 2
@@ -220,6 +223,8 @@ class AbstractPost(DatedModel):
         verbose_name=_('Content'), validators=[validators.NullableMaxLengthValidator(
             machina_settings.POST_CONTENT_MAX_LENGTH)])
 
+    tokens = SetTextField(base_field=models.CharField(max_length=255), null=True)
+
     # Username: if the user creating a topic post is not authenticated, he must enter a username
     username = models.CharField(verbose_name=_('Username'), max_length=155, blank=True, null=True)
 
@@ -302,6 +307,7 @@ class AbstractPost(DatedModel):
 
     def save(self, *args, **kwargs):
         new_post = self.pk is None
+        
         super(AbstractPost, self).save(*args, **kwargs)
 
         # Ensures that the subject of the thread corresponds to the one associated
