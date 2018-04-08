@@ -18,6 +18,7 @@ class MemberApp(Application):
     topic_subscribe_view = get_class('forum_member.views', 'TopicSubscribeView')
     topic_unsubscribe_view = get_class('forum_member.views', 'TopicUnsubscribeView')
     topic_subscription_list_view = get_class('forum_member.views', 'TopicSubscribtionListView')
+    user_notification = get_class('forum_member.views', 'UserNotificationView')
 
     def get_urls(self):
         return [
@@ -36,6 +37,7 @@ class MemberApp(Application):
                 self.topic_subscribe_view.as_view(), name='topic_subscribe'),
             url(_(r'^topic/(?P<pk>\d+)/unsubscribe/$'),
                 self.topic_unsubscribe_view.as_view(), name='topic_unsubscribe'),
+            url(_(r'^notifications/$'), self.user_notification.as_view(), name='user_notifications'),
         ]
 
 
