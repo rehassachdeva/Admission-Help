@@ -25,6 +25,8 @@ from machina.core.loading import get_class
 
 import re
 
+FLAG_THRESHOLD = 5
+
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english') + [""]
 
@@ -845,9 +847,12 @@ def PostDownvoteView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
 def PostFlagView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
     post = get_object_or_404(Post, pk=pk)
     post.flaggers.add(request.user)
+    success_message = _('This message has been flagged successfully.')    
     post.flag_count += 1
+    if post.flag_count > FLAG_THRESHOLD:
+        post.approved = False
+        success_message = _('This message has been flagged successfully and now under moderation.')
     post.save()
-    success_message = _('This message has been flagged successfully.')
     success_url = '{0}?post={1}#{1}'.format(
             reverse('forum_conversation:topic', kwargs={
                 'forum_slug': forum_slug,
@@ -860,9 +865,12 @@ def PostFlagView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
 def PostUnflagView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
     post = get_object_or_404(Post, pk=pk)
     post.flaggers.remove(request.user)
-    post.flag_count -= 1
-    post.save()    
     success_message = _('This message has been unflagged successfully.')
+    post.flag_count -= 1
+    if post.flag_count <= FLAG_THRESHOLD:
+        post.approved = True
+        success_message = _('This message has been unflagged successfully and now approved.')    
+    post.save()    
     success_url = '{0}?post={1}#{1}'.format(
             reverse('forum_conversation:topic', kwargs={
                 'forum_slug': forum_slug,
