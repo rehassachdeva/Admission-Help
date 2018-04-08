@@ -197,6 +197,8 @@ class BasePostFormView(FormView):
                     self.duplicate = True
             posts = topic.posts.all()
             for post in posts:
+                if post == self.get_post():
+                    continue                
                 if hasattr(post, "tokens"):
                     post_tokens = post.tokens
                     jsm = self.compute_jaccard_similarity(post_tokens, self.tokens)
@@ -480,18 +482,13 @@ class BaseTopicFormView(BasePostFormView):
         forum = self.get_forum()
         topics = forum.topics.all()
         for topic in topics:
+            if topic == self.get_topic():
+                continue
             if hasattr(topic, "tokens"):
                 topic_tokens = topic.tokens
                 jsm = self.compute_jaccard_similarity(topic_tokens, self.tokens)
                 if jsm > 0.7:
                     self.duplicate = True            
-            posts = topic.posts.all()
-            for post in posts:
-                if hasattr(post, "tokens"):
-                    post_tokens = post.tokens
-                    jsm = self.compute_jaccard_similarity(post_tokens, self.tokens)
-                    if jsm > 0.7:
-                        self.duplicate = True
 
         # Initializes the forms
         post_form_class = self.get_post_form_class()
