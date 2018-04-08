@@ -26,7 +26,7 @@ from machina.core.loading import get_class
 import re
 
 FLAG_THRESHOLD = 5
-USERFLAG_THRESHOLD = 1
+USERFLAG_THRESHOLD = 10
 
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english') + [""]

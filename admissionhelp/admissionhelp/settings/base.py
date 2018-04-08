@@ -273,4 +273,13 @@ MACHINA_DEFAULT_AUTHENTICATED_USER_FORUM_PERMISSIONS = [
     'can_create_polls',
     'can_vote_in_polls',
     'can_download_file',
+    'can_post_stickies',
+    'can_post_announcements',
+    'can_post_tips',
+    'can_post_studymaterials',
+    'can_post_newsstories',
+    'can_delete_own_posts',
+    'can_attach_files',
+    'can_lock_topics',
+    'can_move_topics',
 ]

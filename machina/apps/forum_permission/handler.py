@@ -349,42 +349,42 @@ class PermissionHandler(object):
         Given a forum, checks whether the user can change its topic types to normal
         topics.
         """
-        return self._perform_basic_permission_check(forum, user, 'can_edit_posts')
+        return self._perform_basic_permission_check(forum, user, 'can_edit_own_posts')
 
     def can_update_topics_to_sticky_topics(self, forum, user):
         """
         Given a forum, checks whether the user can change its topic types to sticky
         topics.
         """
-        return self._perform_basic_permission_check(forum, user, 'can_edit_posts') \
+        return self._perform_basic_permission_check(forum, user, 'can_edit_own_posts') \
             and self._perform_basic_permission_check(forum, user, 'can_post_stickies')
 
     def can_update_topics_to_announces(self, forum, user):
         """
         Given a forum, checks whether the user can change its topic types to announces.
         """
-        return self._perform_basic_permission_check(forum, user, 'can_edit_posts') \
+        return self._perform_basic_permission_check(forum, user, 'can_edit_own_posts') \
             and self._perform_basic_permission_check(forum, user, 'can_post_announcements')
 
     def can_update_topics_to_tips(self, forum, user):
         """
         Given a forum, checks whether the user can change its topic types to announces.
         """
-        return self._perform_basic_permission_check(forum, user, 'can_edit_posts') \
+        return self._perform_basic_permission_check(forum, user, 'can_edit_own_posts') \
             and self._perform_basic_permission_check(forum, user, 'can_post_tips') 
 
     def can_update_topics_to_studymaterials(self, forum, user):
         """
         Given a forum, checks whether the user can change its topic types to announces.
         """
-        return self._perform_basic_permission_check(forum, user, 'can_edit_posts') \
+        return self._perform_basic_permission_check(forum, user, 'can_edit_own_posts') \
             and self._perform_basic_permission_check(forum, user, 'can_post_studymaterials')
 
     def can_update_topics_to_newsstories(self, forum, user):
         """
         Given a forum, checks whether the user can change its topic types to announces.
         """
-        return self._perform_basic_permission_check(forum, user, 'can_edit_posts') \
+        return self._perform_basic_permission_check(forum, user, 'can_edit_own_posts') \
             and self._perform_basic_permission_check(forum, user, 'can_post_newsstories')                                   
 
     def can_approve_posts(self, forum, user):
