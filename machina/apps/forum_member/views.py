@@ -26,6 +26,7 @@ Forum = get_model('forum', 'Forum')
 ForumProfile = get_model('forum_member', 'ForumProfile')
 Post = get_model('forum_conversation', 'Post')
 Topic = get_model('forum_conversation', 'Topic')
+Notifications = get_model('forum_conversation', 'UserNotification')
 
 ForumProfileForm = get_class('forum_member.forms', 'ForumProfileForm')
 
@@ -214,3 +215,15 @@ class TopicSubscribtionListView(ListView):
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super(TopicSubscribtionListView, self).dispatch(request, *args, **kwargs)
+
+class UserNotificationView(ListView):
+    model = Notifications
+    context_object_name = 'notifications'
+    template_name = 'forum_member/user_notification_list.html'
+
+    def get_queryset(self):
+        return Notifications.objects.filter(user=self.request.user).order_by('-created_at')
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(UserNotificationView, self).dispatch(request, *args, **kwargs)
