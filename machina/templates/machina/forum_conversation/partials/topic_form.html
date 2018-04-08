@@ -9,6 +9,7 @@
 
   {% include "partials/form_field.html" with field=post_form.subject %}
   {% include "partials/form_field.html" with field=post_form.content %}
+  {% include "partials/form_field.html" with field=post_form.tags %}
   {% if post_form.username %}
     {% include "partials/form_field.html" with field=post_form.username %}
   {% endif %}

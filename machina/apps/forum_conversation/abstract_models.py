@@ -36,6 +36,9 @@ class AbstractTopic(DatedModel):
 
     # The subject of the thread should correspond to the one associated with the first post
     subject = models.CharField(max_length=255, verbose_name=_('Subject'))
+
+    tags = models.CharField(verbose_name=_('Tags'), max_length=255, null=True)
+
     slug = models.SlugField(max_length=255, verbose_name=_('Slug'))
 
     tokens = SetTextField(base_field=models.CharField(max_length=255), null=True)    
@@ -242,6 +245,7 @@ class AbstractPost(DatedModel):
     # one associated with the first post
     subject = models.CharField(verbose_name=_('Subject'), max_length=255)
 
+    tags = models.CharField(verbose_name=_('Tags'), max_length=255, null=True)
     # Content
     content = MarkupTextField(
         verbose_name=_('Content'), validators=[validators.NullableMaxLengthValidator(
@@ -329,6 +333,9 @@ class AbstractPost(DatedModel):
         """
         position = self.topic.posts.filter(Q(created__lt=self.created) | Q(id=self.id)).count()
         return position
+
+    def get_tags_as_list(self):
+        return self.tags.split(",")
 
     def has_upvoter(self, user):
         """
