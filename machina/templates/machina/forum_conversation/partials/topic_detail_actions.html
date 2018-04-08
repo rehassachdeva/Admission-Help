@@ -10,6 +10,9 @@
 {% get_permission 'can_update_topics_to_normal_topics' topic.forum request.user as user_can_change_to_normal_topics %}
 {% get_permission 'can_update_topics_to_sticky_topics' topic.forum request.user as user_can_change_to_sticky_topics %}
 {% get_permission 'can_update_topics_to_announces' topic.forum request.user as user_can_change_to_announces %}
+{% get_permission 'can_update_topics_to_tips' topic.forum request.user as user_can_change_to_tips %}
+{% get_permission 'can_update_topics_to_studymaterials' topic.forum request.user as user_can_change_to_studymaterials %}
+{% get_permission 'can_update_topics_to_newsstories' topic.forum request.user as user_can_change_to_newsstories %}
 
 {% if user_can_add_post %}
   <a href="{% url 'forum_conversation:post_create' forum.slug forum.pk topic.slug topic.pk %}" class="btn btn-primary btn-sm"><i class="fa fa-comment fa-lg"></i>&nbsp;{% trans "Post reply" %}</a>
@@ -28,14 +31,55 @@
       {% if user_can_delete_topics %}<li><a href="{% url 'forum_moderation:topic_delete' slug=topic.slug pk=topic.pk %}">{% trans "Delete topic" %}</a></li>{% endif %}
       {% if user_can_move_topics %}<li><a href="{% url 'forum_moderation:topic_move' slug=topic.slug pk=topic.pk %}">{% trans "Move topic" %}</a></li>{% endif %}
       {% if topic.is_topic %}
-        {% if user_can_change_to_sticky_topics %}<li><a href="{% url 'forum_moderation:topic_update_to_sticky' slug=topic.slug pk=topic.pk %}">{% trans "Change to sticky topic" %}</a></li>{% endif %}
+
         {% if user_can_change_to_announces %}<li><a href="{% url 'forum_moderation:topic_update_to_announce' slug=topic.slug pk=topic.pk %}">{% trans "Change to announce" %}</a></li> {% endif %}
-      {% elif topic.is_sticky %}
-        {% if user_can_change_to_normal_topics %}<li><a href="{% url 'forum_moderation:topic_update_to_post' slug=topic.slug pk=topic.pk %}">{% trans "Change to standard topic" %}</a></li>{% endif %}
-        {% if user_can_change_to_announces %}<li><a href="{% url 'forum_moderation:topic_update_to_announce' slug=topic.slug pk=topic.pk %}">{% trans "Change to announce" %}</a></li> {% endif %}
+      
+        {% if user_can_change_to_tips %}<li><a href="{% url 'forum_moderation:topic_update_to_tips' slug=topic.slug pk=topic.pk %}">{% trans "Change to Tips and Tricks" %}</a></li> {% endif %}
+      
+        {% if user_can_change_to_studymaterials %}<li><a href="{% url 'forum_moderation:topic_update_to_studymaterials' slug=topic.slug pk=topic.pk %}">{% trans "Change to Study materials" %}</a></li> {% endif %} 
+      
+        {% if user_can_change_to_newsstories %}<li><a href="{% url 'forum_moderation:topic_update_to_newsstories' slug=topic.slug pk=topic.pk %}">{% trans "Change to News Stories" %}</a></li> {% endif %}           
+
       {% elif topic.is_announce %}
+      
         {% if user_can_change_to_normal_topics %}<li><a href="{% url 'forum_moderation:topic_update_to_post' slug=topic.slug pk=topic.pk %}">{% trans "Change to standard topic" %}</a></li>{% endif %}
-        {% if user_can_change_to_sticky_topics %}<li><a href="{% url 'forum_moderation:topic_update_to_sticky' slug=topic.slug pk=topic.pk %}">{% trans "Change to sticky topic" %}</a></li>{% endif %}
+      
+        {% if user_can_change_to_tips %}<li><a href="{% url 'forum_moderation:topic_update_to_tips' slug=topic.slug pk=topic.pk %}">{% trans "Change to Tips and Tricks" %}</a></li> {% endif %}
+      
+        {% if user_can_change_to_studymaterials %}<li><a href="{% url 'forum_moderation:topic_update_to_studymaterials' slug=topic.slug pk=topic.pk %}">{% trans "Change to Study materials" %}</a></li> {% endif %} 
+      
+        {% if user_can_change_to_newsstories %}<li><a href="{% url 'forum_moderation:topic_update_to_newsstories' slug=topic.slug pk=topic.pk %}">{% trans "Change to News Stories" %}</a></li> {% endif %} 
+
+      {% elif topic.is_tips %}  
+      
+        {% if user_can_change_to_normal_topics %}<li><a href="{% url 'forum_moderation:topic_update_to_post' slug=topic.slug pk=topic.pk %}">{% trans "Change to standard topic" %}</a></li>{% endif %}
+      
+        {% if user_can_change_to_announces %}<li><a href="{% url 'forum_moderation:topic_update_to_announce' slug=topic.slug pk=topic.pk %}">{% trans "Change to announce" %}</a></li> {% endif %}
+      
+        {% if user_can_change_to_studymaterials %}<li><a href="{% url 'forum_moderation:topic_update_to_studymaterials' slug=topic.slug pk=topic.pk %}">{% trans "Change to Study materials" %}</a></li> {% endif %} 
+      
+        {% if user_can_change_to_newsstories %}<li><a href="{% url 'forum_moderation:topic_update_to_newsstories' slug=topic.slug pk=topic.pk %}">{% trans "Change to News Stories" %}</a></li> {% endif %}        
+
+      {% elif topic.is_studymaterials %}  
+      
+        {% if user_can_change_to_normal_topics %}<li><a href="{% url 'forum_moderation:topic_update_to_post' slug=topic.slug pk=topic.pk %}">{% trans "Change to standard topic" %}</a></li>{% endif %}
+      
+        {% if user_can_change_to_announces %}<li><a href="{% url 'forum_moderation:topic_update_to_announce' slug=topic.slug pk=topic.pk %}">{% trans "Change to announce" %}</a></li> {% endif %}
+      
+        {% if user_can_change_to_tips %}<li><a href="{% url 'forum_moderation:topic_update_to_tips' slug=topic.slug pk=topic.pk %}">{% trans "Change to Tips and Tricks" %}</a></li> {% endif %}
+      
+        {% if user_can_change_to_newsstories %}<li><a href="{% url 'forum_moderation:topic_update_to_newsstories' slug=topic.slug pk=topic.pk %}">{% trans "Change to News Stories" %}</a></li> {% endif %} 
+
+      {% elif topic.is_newsstories %}  
+      
+        {% if user_can_change_to_normal_topics %}<li><a href="{% url 'forum_moderation:topic_update_to_post' slug=topic.slug pk=topic.pk %}">{% trans "Change to standard topic" %}</a></li>{% endif %}
+      
+        {% if user_can_change_to_announces %}<li><a href="{% url 'forum_moderation:topic_update_to_announce' slug=topic.slug pk=topic.pk %}">{% trans "Change to announce" %}</a></li> {% endif %}
+        
+        {% if user_can_change_to_tips %}<li><a href="{% url 'forum_moderation:topic_update_to_tips' slug=topic.slug pk=topic.pk %}">{% trans "Change to 
+        Tips and Tricks" %}</a></li> {% endif %}
+        
+        {% if user_can_change_to_studymaterials %}<li><a href="{% url 'forum_moderation:topic_update_to_studymaterials' slug=topic.slug pk=topic.pk %}">{% trans "Change to Study materials" %}</a></li> {% endif %}                           
       {% endif %}
     </ul>
   </div>

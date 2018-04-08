@@ -41,11 +41,14 @@ class AbstractTopic(DatedModel):
     tokens = SetTextField(base_field=models.CharField(max_length=255), null=True)    
 
     # Sticky, Announce, Global topic or Default topic ; that's what a topic can be
-    TOPIC_POST, TOPIC_STICKY, TOPIC_ANNOUNCE = 0, 1, 2
+    TOPIC_POST, TOPIC_STICKY, TOPIC_ANNOUNCE, TOPIC_TIPS, TOPIC_STUDY_MATERIALS, TOPIC_NEWS_STORIES = 0, 1, 2, 3, 4, 5
     TYPE_CHOICES = (
         (TOPIC_POST, _('Default topic')),
         (TOPIC_STICKY, _('Sticky')),
         (TOPIC_ANNOUNCE, _('Announce')),
+        (TOPIC_TIPS, _('Tips and Tricks')),
+        (TOPIC_STUDY_MATERIALS, _('Study Materials')),
+        (TOPIC_NEWS_STORIES, _('News Stories')),
     )
     type = models.PositiveSmallIntegerField(
         choices=TYPE_CHOICES, verbose_name=_('Topic type'), db_index=True)
@@ -123,6 +126,27 @@ class AbstractTopic(DatedModel):
         Returns True if the topic is an announce.
         """
         return self.type == self.TOPIC_ANNOUNCE
+
+    @property
+    def is_tips(self):
+        """
+        Returns True if the topic is an announce.
+        """
+        return self.type == self.TOPIC_TIPS
+
+    @property
+    def is_studymaterials(self):
+        """
+        Returns True if the topic is an announce.
+        """
+        return self.type == self.TOPIC_STUDY_MATERIALS
+
+    @property
+    def is_newsstories(self):
+        """
+        Returns True if the topic is an announce.
+        """
+        return self.type == self.TOPIC_NEWS_STORIES                        
 
     @property
     def is_locked(self):

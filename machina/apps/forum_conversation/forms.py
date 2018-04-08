@@ -124,6 +124,9 @@ class TopicForm(PostForm):
         # Perform some checks before doing anything
         self.can_add_stickies = self.perm_handler.can_add_stickies(self.forum, self.user)
         self.can_add_announcements = self.perm_handler.can_add_announcements(self.forum, self.user)
+        self.can_add_tips = self.perm_handler.can_add_tips(self.forum, self.user)
+        self.can_add_studymaterials = self.perm_handler.can_add_studymaterials(self.forum, self.user)
+        self.can_add_newsstories = self.perm_handler.can_add_newsstories(self.forum, self.user)
         self.can_create_polls = self.perm_handler.can_create_polls(self.forum, self.user)
 
         if not self.can_add_stickies:
@@ -136,6 +139,22 @@ class TopicForm(PostForm):
                 lambda t: t[0] != Topic.TOPIC_ANNOUNCE,
                 self.fields['topic_type'].choices)
             self.fields['topic_type'].choices = choices
+        if not self.can_add_tips:
+            choices = filter(
+                lambda t: t[0] != Topic.TOPIC_TIPS,
+                self.fields['topic_type'].choices)
+            self.fields['topic_type'].choices = choices
+        if not self.can_add_studymaterials:
+            choices = filter(
+                lambda t: t[0] != Topic.TOPIC_STUDY_MATERIALS,
+                self.fields['topic_type'].choices)
+            self.fields['topic_type'].choices = choices
+        if not self.can_add_newsstories:
+            choices = filter(
+                lambda t: t[0] != Topic.TOPIC_NEWS_STORIES,
+                self.fields['topic_type'].choices)
+            self.fields['topic_type'].choices = choices                        
+
 
         # Append polls fields to the form if the user is allowed to create such things
         if self.can_create_polls:

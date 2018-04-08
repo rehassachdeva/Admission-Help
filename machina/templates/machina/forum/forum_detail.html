@@ -47,10 +47,27 @@
 {% with topic_list_title=announcements_title_trans topics=announces hide_if_empty=True unread_topics=unread_topics %}
 {% include "forum_conversation/topic_list.html" %}
 {% endwith %}
+
+{% trans "Tips and Tricks" as tips_title_trans %}
+{% with topic_list_title=tips_title_trans topics=tips hide_if_empty=True unread_topics=unread_topics %}
+{% include "forum_conversation/topic_list.html" %}
+{% endwith %}
+
+{% trans "Study Materials" as studymaterials_title_trans %}
+{% with topic_list_title=studymaterials_title_trans topics=studymaterials hide_if_empty=True unread_topics=unread_topics %}
+{% include "forum_conversation/topic_list.html" %}
+{% endwith %}
+
+{% trans "News Stories" as newsstories_title_trans %}
+{% with topic_list_title=newsstories_title_trans topics=newsstories hide_if_empty=True unread_topics=unread_topics %}
+{% include "forum_conversation/topic_list.html" %}
+{% endwith %}
+
 {% trans "Topics" as topics_title_trans %}
 {% with topic_list_title=topics_title_trans unread_topics=unread_topics%}
 {% include "forum_conversation/topic_list.html" %}
 {% endwith %}
+
 <div class="row">
   <div class="col-xs-6 col-md-4 forum-actions-block">
     {% if user_can_add_topic %}

@@ -22,7 +22,7 @@
           <table class="topic-data-table">
             <tr>
               <td class="topic-icon {% if topic in unread_topics or force_all_unread %}unread{% endif %}">
-                <i class="fa {% if topic.is_sticky %}fa-lightbulb-o{% elif topic.is_announce %}fa-info{% else %}fa-dot-circle-o{% endif %} fa-2x"></i>
+                <i class="fa {% if topic.is_sticky %}fa-lightbulb-o{% elif topic.is_announce %}fa-info{% elif topic.is_tips %}fa-trophy{% elif topic.is_studymaterials %}fa-book{% elif topic.is_newsstories %}fa-newspaper-o{% else %}fa-dot-circle-o{% endif %} fa-2x"></i>
               </td>
               <td class="topic-name">
                 <a href="{% url 'forum_conversation:topic' topic.forum.slug topic.forum.pk topic.slug topic.pk %}" class="topic-name-link">{{ topic.subject }}</a>{% if topic.is_locked %}&nbsp;<i class="fa fa-times-circle locked-indicator" title="{% trans 'This topic is locked' %}"></i>{% endif %}

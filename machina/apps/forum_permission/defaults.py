@@ -46,6 +46,21 @@ class PermissionConfig(object):
             'scope': 'conversation',
         },
         {
+            'fields': {'codename': 'can_post_tips', 'is_local': True, 'is_global': True, },
+            'label': _('Can post tips and tricks'),
+            'scope': 'conversation',
+        },
+        {
+            'fields': {'codename': 'can_post_studymaterials', 'is_local': True, 'is_global': True, },
+            'label': _('Can post study materials'),
+            'scope': 'conversation',
+        },
+        {
+            'fields': {'codename': 'can_post_newsstories', 'is_local': True, 'is_global': True, },
+            'label': _('Can post news stories'),
+            'scope': 'conversation',
+        },                        
+        {
             'fields': {'codename': 'can_post_stickies', 'is_local': True, 'is_global': True, },
             'label': _('Can post stickies'),
             'scope': 'conversation',

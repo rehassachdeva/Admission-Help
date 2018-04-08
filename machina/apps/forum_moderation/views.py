@@ -334,6 +334,41 @@ class TopicUpdateToAnnounceView(TopicUpdateTypeBaseView):
     def perform_permissions_check(self, user, obj, perms):
         return self.request.forum_permission_handler.can_update_topics_to_announces(obj, user)
 
+class TopicUpdateToTipsView(TopicUpdateTypeBaseView):
+    target_type = Topic.TOPIC_TIPS
+    question = _('Would you want to change this topic to a tips and tricks topic?')
+
+    # Permissions checks
+
+    def perform_permissions_check(self, user, obj, perms):
+        return self.request.forum_permission_handler.can_update_topics_to_tips(obj, user)      
+
+class TopicUpdateToStudymaterialsView(TopicUpdateTypeBaseView):
+    target_type = Topic.TOPIC_STUDY_MATERIALS
+    question = _('Would you want to change this topic to a study material topic?')
+
+    # Permissions checks
+
+    def perform_permissions_check(self, user, obj, perms):
+        return self.request.forum_permission_handler.can_update_topics_to_studymaterials(obj, user)  
+
+class TopicUpdateToStudymaterialsView(TopicUpdateTypeBaseView):
+    target_type = Topic.TOPIC_STUDY_MATERIALS
+    question = _('Would you want to change this topic to a study material topic?')
+
+    # Permissions checks
+
+    def perform_permissions_check(self, user, obj, perms):
+        return self.request.forum_permission_handler.can_update_topics_to_studymaterials(obj, user)                 
+
+class TopicUpdateToNewsstoriesView(TopicUpdateTypeBaseView):
+    target_type = Topic.TOPIC_NEWS_STORIES
+    question = _('Would you want to change this topic to a news story?')
+
+    # Permissions checks
+
+    def perform_permissions_check(self, user, obj, perms):
+        return self.request.forum_permission_handler.can_update_topics_to_newsstories(obj, user) 
 
 class ModerationQueueListView(PermissionRequiredMixin, ListView):
     template_name = 'forum_moderation/moderation_queue/list.html'

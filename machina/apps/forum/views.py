@@ -74,7 +74,8 @@ class ForumView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         self.forum = self.get_forum()
-        qs = self.forum.topics.exclude(type=Topic.TOPIC_ANNOUNCE).exclude(approved=False) \
+        qs = self.forum.topics.exclude(type=Topic.TOPIC_ANNOUNCE).exclude(type=Topic.TOPIC_TIPS) \
+            .exclude(type=Topic.TOPIC_STUDY_MATERIALS).exclude(type=Topic.TOPIC_NEWS_STORIES).exclude(approved=False) \
             .select_related('poster', 'last_post', 'last_post__poster')
         return qs
 
@@ -97,9 +98,21 @@ class ForumView(PermissionRequiredMixin, ListView):
             self.get_forum().topics.select_related('poster', 'last_post', 'last_post__poster')
             .filter(type=Topic.TOPIC_ANNOUNCE))
 
+        context['tips'] = list(
+            self.get_forum().topics.select_related('poster', 'last_post', 'last_post__poster')
+            .filter(type=Topic.TOPIC_TIPS)) 
+
+        context['studymaterials'] = list(
+            self.get_forum().topics.select_related('poster', 'last_post', 'last_post__poster')
+            .filter(type=Topic.TOPIC_STUDY_MATERIALS))  
+
+        context['newsstories'] = list(
+            self.get_forum().topics.select_related('poster', 'last_post', 'last_post__poster')
+            .filter(type=Topic.TOPIC_NEWS_STORIES))                             
+
         # Determines the topics that have not been read by the current user
         context['unread_topics'] = TrackingHandler(self.request).get_unread_topics(
-            list(context[self.context_object_name]) + context['announces'], self.request.user)
+            list(context[self.context_object_name]) + context['announces'] + context['tips'] + context['studymaterials'] + context['newsstories'], self.request.user)
 
         return context
 

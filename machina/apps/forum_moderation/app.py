@@ -21,6 +21,9 @@ class ModerationApp(Application):
     topic_update_to_sticky_topic_view = get_class(
         'forum_moderation.views', 'TopicUpdateToStickyTopicView')
     topic_update_to_announce_view = get_class('forum_moderation.views', 'TopicUpdateToAnnounceView')
+    topic_update_to_tips_view = get_class('forum_moderation.views', 'TopicUpdateToTipsView')
+    topic_update_to_studymaterials_view = get_class('forum_moderation.views', 'TopicUpdateToStudymaterialsView')
+    topic_update_to_newsstories_view = get_class('forum_moderation.views', 'TopicUpdateToNewsstoriesView')
     moderation_queue_list_view = get_class('forum_moderation.views', 'ModerationQueueListView')
     moderation_queue_detail_view = get_class('forum_moderation.views', 'ModerationQueueDetailView')
     post_approve_view = get_class('forum_moderation.views', 'PostApproveView')
@@ -42,6 +45,12 @@ class ModerationApp(Application):
                 self.topic_update_to_sticky_topic_view.as_view(), name='topic_update_to_sticky'),
             url(_(r'^topic/(?P<slug>[\w-]+)-(?P<pk>\d+)/change/announce/$'),
                 self.topic_update_to_announce_view.as_view(), name='topic_update_to_announce'),
+            url(_(r'^topic/(?P<slug>[\w-]+)-(?P<pk>\d+)/change/tips/$'),
+                self.topic_update_to_tips_view.as_view(), name='topic_update_to_tips'),
+            url(_(r'^topic/(?P<slug>[\w-]+)-(?P<pk>\d+)/change/studymaterials/$'),
+                self.topic_update_to_studymaterials_view.as_view(), name='topic_update_to_studymaterials'),
+            url(_(r'^topic/(?P<slug>[\w-]+)-(?P<pk>\d+)/change/newsstories/$'),
+                self.topic_update_to_newsstories_view.as_view(), name='topic_update_to_newsstories'),                                            
             url(_(r'^queue/$'), self.moderation_queue_list_view.as_view(), name='queue'),
             url(_(r'^queue/(?P<pk>\d+)/$'),
                 self.moderation_queue_detail_view.as_view(), name='queued_post'),
