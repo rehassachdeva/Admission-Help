@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+
 from django.db.models import Q
 from django.utils.encoding import force_text
 from django.utils.encoding import python_2_unicode_compatible
@@ -17,6 +18,7 @@ from machina.core import validators
 from machina.core.loading import get_class
 from machina.models.abstract_models import DatedModel
 from machina.models.fields import MarkupTextField
+
 
 
 ApprovedManager = get_class('forum_conversation.managers', 'ApprovedManager')
@@ -245,7 +247,7 @@ class AbstractPost(DatedModel):
     # one associated with the first post
     subject = models.CharField(verbose_name=_('Subject'), max_length=255)
 
-    tags = models.CharField(verbose_name=_('Tags'), max_length=255, null=True)
+    tags = models.CharField(verbose_name=_('Tags'), max_length=255, null=True, blank=True)
     # Content
     content = MarkupTextField(
         verbose_name=_('Content'), validators=[validators.NullableMaxLengthValidator(
@@ -335,7 +337,10 @@ class AbstractPost(DatedModel):
         return position
 
     def get_tags_as_list(self):
-        return self.tags.split(",")
+        if self.tags:
+            return self.tags.split(",")
+        else:
+            return []
 
     def has_upvoter(self, user):
         """
@@ -391,3 +396,5 @@ class AbstractPost(DatedModel):
         else:
             super(AbstractPost, self).delete(using)
             self.topic.update_trackers()
+
+            

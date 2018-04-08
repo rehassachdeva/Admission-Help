@@ -26,6 +26,7 @@ from machina.core.loading import get_class
 import re
 
 FLAG_THRESHOLD = 5
+USERFLAG_THRESHOLD = 1
 
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english') + [""]
@@ -36,6 +37,7 @@ porter = PorterStemmer()
 Attachment = get_model('forum_attachments', 'Attachment')
 Forum = get_model('forum', 'Forum')
 Post = get_model('forum_conversation', 'Post')
+Userflags = get_model('forum_conversation', 'Userflags')
 Topic = get_model('forum_conversation', 'Topic')
 TopicPollOption = get_model('forum_polls', 'TopicPollOption')
 
@@ -847,6 +849,15 @@ def PostDownvoteView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
 def PostFlagView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
     post = get_object_or_404(Post, pk=pk)
     post.flaggers.add(request.user)
+    userflag = get_object_or_404(Userflags, user=post.poster)
+    userflag.flag_count += 1
+    userflag.save()
+
+    if userflag.flag_count > USERFLAG_THRESHOLD:
+        print("hello")
+        post.poster.is_active = False
+        post.poster.save()
+
     success_message = _('This message has been flagged successfully.')    
     post.flag_count += 1
     if post.flag_count > FLAG_THRESHOLD:
@@ -865,9 +876,18 @@ def PostFlagView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
 def PostUnflagView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
     post = get_object_or_404(Post, pk=pk)
     post.flaggers.remove(request.user)
+    userflag = get_object_or_404(Userflags, user=post.poster)
+    userflag.flag_count -= 1
+    userflag.save()
+
+
+    if userflag.flag_count == USERFLAG_THRESHOLD:
+        post.poster.is_active = True  
+        post.poster.save() 
+
     success_message = _('This message has been unflagged successfully.')
     post.flag_count -= 1
-    if post.flag_count <= FLAG_THRESHOLD:
+    if post.flag_count == FLAG_THRESHOLD:
         post.approved = True
         success_message = _('This message has been unflagged successfully and now approved.')    
     post.save()    
