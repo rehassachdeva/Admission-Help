@@ -1,0 +1,46 @@
+{% extends 'board_base.html' %}
+{% load i18n %}
+
+{% block sub_title %}{% trans "Your notifications" %}{% endblock sub_title %}
+
+
+{% block content %}
+  <div class="row">
+    <div class="col-xs-12">
+      <h1>{% trans "Your notifications" %}</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-6 col-md-4 forum-actions-block">
+      {% if paginator.count > 0 %}
+      <p class="text-muted">
+        {% blocktrans trimmed count counter=paginator.count %}
+          {{ counter }} topic found
+        {% plural %}
+          {{ counter }} notifications found
+        {% endblocktrans %}
+      </p>
+      {% endif %}
+    </div>
+      <div class="col-xs-12 col-md-8 pagination-block">
+        {% with "pagination-sm" as pagination_size %}
+          {% include "partials/pagination.html" %}
+        {% endwith %}
+      </div>
+  </div>
+  <ul class="list-group">
+      {% for notif in notifications %}
+        <li class="list-group-item">
+            <a href="{{notif.notification_link}}">{{notif.notification_content}}</a>
+            <small class="text-muted" style="float:right;">{{notif.created_at}}</small>
+        </li>
+      {% endfor %}
+  </ul>
+  <div class="row">
+    <div class="col-xs-12 col-md-12 pagination-block">
+      {% with "pagination-sm" as pagination_size %}
+        {% include "partials/pagination.html" %}
+      {% endwith %}
+    </div>
+  </div>
+{% endblock content %}
