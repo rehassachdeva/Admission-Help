@@ -13,13 +13,38 @@ from django.utils.translation import ugettext_lazy as _
 
 
 Topic = model_factory(AbstractTopic)
-Post = model_factory(AbstractPost)
+
 
 class UserNotification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     notification_content = models.CharField(max_length=100)
     notification_link = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Post(AbstractPost):
+    __original_flags = None
+    __original_votes = None
+
+    def __init__(self, *args, **kwargs):
+        super(Post, self).__init__(*args, **kwargs)
+        self.__original_flags = self.flag_count
+        self.__original_votes = self.vote_count
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        super(Post, self).save(force_insert, force_update, *args, **kwargs)
+
+        notification_link = "/forum/{}-{}/topic/{}-{}/?post={}#{}".format(self.topic.forum.slug, self.topic.forum.id, self.topic.slug, self.topic.id, self.id, self.id)
+        if self.__original_flags != self.flag_count:
+            n = UserNotification(user=self.poster, notification_content="Flag updates on post {}".format(self.subject), notification_link=notification_link)
+            n.save()
+
+        if self.__original_votes != self.vote_count:
+            n = UserNotification(user=self.poster, notification_content="Vote update on post {}".format(self.subject), notification_link=notification_link)
+            n.save()
+
+        self.__original_flags = self.flag_count
+        self.__original_votes = self.vote_count
 
 class Userflags(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
