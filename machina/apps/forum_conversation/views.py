@@ -11,6 +11,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.generic import DeleteView
 from django.views.generic import FormView
 from django.views.generic import ListView
+from django.views.generic import UpdateView
+from django.views.generic import DetailView
+from django.views.generic.edit import ModelFormMixin
 from django.views.generic.detail import SingleObjectMixin
 from django_mysql.models import SetTextField
 
@@ -39,6 +42,7 @@ PostForm = get_class('forum_conversation.forms', 'PostForm')
 TopicForm = get_class('forum_conversation.forms', 'TopicForm')
 TopicPollOptionFormset = get_class('forum_polls.forms', 'TopicPollOptionFormset')
 TopicPollVoteForm = get_class('forum_polls.forms', 'TopicPollVoteForm')
+PostUpvoteForm = get_class('forum_conversation.forms', 'PostUpvoteForm')
 
 attachments_cache = get_class('forum_attachments.cache', 'cache')
 
@@ -807,3 +811,33 @@ class PostDeleteView(PermissionRequiredMixin, DeleteView):
 
     def perform_permissions_check(self, user, obj, perms):
         return self.request.forum_permission_handler.can_delete_post(obj, user)
+
+def PostUpvoteView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.upvoters.add(request.user)
+    post.vote_count += 1
+    post.save()
+    success_message = _('This message has been upvoted successfully.')
+    success_url = '{0}?post={1}#{1}'.format(
+            reverse('forum_conversation:topic', kwargs={
+                'forum_slug': forum_slug,
+                'forum_pk': forum_pk,
+                'slug': topic_slug,
+                'pk': topic_pk}), pk)
+    messages.success(request, success_message)
+    return HttpResponseRedirect(success_url)
+
+def PostDownvoteView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.upvoters.remove(request.user)
+    post.vote_count -= 1
+    post.save()    
+    success_message = _('This message has been downvoted successfully.')
+    success_url = '{0}?post={1}#{1}'.format(
+            reverse('forum_conversation:topic', kwargs={
+                'forum_slug': forum_slug,
+                'forum_pk': forum_pk,
+                'slug': topic_slug,
+                'pk': topic_pk}), pk)
+    messages.success(request, success_message)
+    return HttpResponseRedirect(success_url)    

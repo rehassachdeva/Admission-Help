@@ -207,3 +207,6 @@ class TopicForm(PostForm):
                     self.instance.topic._simple_save()
 
         return super(TopicForm, self).save(commit)
+
+class PostUpvoteForm(forms.Form):
+    pass

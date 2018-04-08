@@ -147,6 +147,26 @@ class PermissionHandler(object):
                     checker.has_perm('can_edit_posts', post.topic.forum))
         return can_edit
 
+    def can_upvote_post(self, post, user):
+        """
+        Given a forum post, checks whether the user can upvote the latter.
+        """
+        # A user can upvote post if they are authenticated and if they have the permission
+        # to read the related forum. Of course a user can upvote only if they have not already
+        # upvoted to the considered post.
+        return user.is_authenticated and not post.has_upvoter(user) \
+            and self._perform_basic_permission_check(post.topic.forum, user, 'can_read_forum') 
+
+    def can_downvote_post(self, post, user):
+        """
+        Given a forum post, checks whether the user can downvote the latter.
+        """
+        # A user can downvote post if they are authenticated and if they have the permission
+        # to read the related forum. Of course a user can downvote only if they have already
+        # upvoted to the considered post.
+        return user.is_authenticated and post.has_upvoter(user) \
+            and self._perform_basic_permission_check(post.topic.forum, user, 'can_read_forum')                  
+
     def can_delete_post(self, post, user):
         """
         Given a forum post, checks whether the user can delete the latter.

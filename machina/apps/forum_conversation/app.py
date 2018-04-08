@@ -10,6 +10,8 @@ from machina.apps.forum_conversation.forum_attachments.app import application as
 from machina.apps.forum_conversation.forum_polls.app import application as polls_app
 from machina.core.app import Application
 from machina.core.loading import get_class
+from .views import PostUpvoteView
+from .views import PostDownvoteView
 
 
 class BaseConversationApp(Application):
@@ -39,6 +41,10 @@ class BaseConversationApp(Application):
                 self.post_update_view.as_view(), name='post_update'),
             url(_(r'^topic/(?P<topic_slug>[\w-]+)-(?P<topic_pk>\d+)/(?P<pk>\d+)/post/delete/$'),
                 self.post_delete_view.as_view(), name='post_delete'),
+            url(_(r'^topic/(?P<topic_slug>[\w-]+)-(?P<topic_pk>\d+)/(?P<pk>\d+)/post/upvote/$'),
+                PostUpvoteView, name='post_upvote'),  
+            url(_(r'^topic/(?P<topic_slug>[\w-]+)-(?P<topic_pk>\d+)/(?P<pk>\d+)/post/downvote/$'),
+                PostDownvoteView, name='post_downvote'),                          
         ]
 
         urls += [

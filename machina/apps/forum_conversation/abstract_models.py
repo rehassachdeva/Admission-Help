@@ -247,6 +247,14 @@ class AbstractPost(DatedModel):
     updates_count = models.PositiveIntegerField(
         verbose_name=_('Updates count'), editable=False, blank=True, default=0)
 
+    # Many users can upvote to this topic
+    upvoters = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name='post_upvoters',
+        blank=True, verbose_name=_('Upvoters'))   
+
+    vote_count = models.PositiveIntegerField(
+        verbose_name=_('Vote count'), editable=False, blank=True, default=0)         
+
     objects = models.Manager()
     approved_objects = ApprovedManager()
 
@@ -289,6 +297,14 @@ class AbstractPost(DatedModel):
         """
         position = self.topic.posts.filter(Q(created__lt=self.created) | Q(id=self.id)).count()
         return position
+
+    def has_upvoter(self, user):
+        """
+        Returns True if the given user is a upvoter of a post
+        """
+        if not hasattr(self, '_upvoters'):
+            self._upvoters = list(self.upvoters.all())
+        return user in self._upvoters
 
     def clean(self):
         super(AbstractPost, self).clean()
