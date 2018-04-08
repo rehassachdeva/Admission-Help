@@ -28,6 +28,14 @@
         <div class="row">
           <div class="col-md-10 post-content-wrapper">
             <div class="pull-right post-controls">
+              {% get_permission 'can_flag_post' post request.user as user_can_flag_post %}
+              {% get_permission 'can_unflag_post' post request.user as user_can_unflag_post %}       
+              {% if user_can_flag_post %}
+              <a href="{% url 'forum_conversation:post_flag' forum.slug forum.pk topic.slug topic.pk post.pk %}" class="btn btn-success btn-xs" title="{% trans "Flag" %}"><i class="fa fa-flag"></i></a>   
+              {% elif user_can_unflag_post %}    
+              <a href="{% url 'forum_conversation:post_unflag' forum.slug forum.pk topic.slug topic.pk post.pk %}" class="btn btn-success btn-xs" title="{% trans "Unflag" %}"><i class="fa fa-flag-o"></i></a>  
+              {% endif %} 
+
               {% get_permission 'can_upvote_post' post request.user as user_can_upvote_post %}
               {% get_permission 'can_downvote_post' post request.user as user_can_downvote_post %}       
 
@@ -83,7 +91,13 @@
                 <small class="text-muted">
                   <i class="fa fa-heart"></i>&nbsp;<b>{% trans "Votes:" %}</b>&nbsp;{{ post.vote_count }}
                 </small>
-              {% endif %}               
+              {% endif %}  
+              {% if post.flag_count %}
+                              <br />
+                <small class="text-muted">
+                  <i class="fa fa-flag"></i>&nbsp;<b>{% trans "Flags:" %}</b>&nbsp;{{ post.flag_count }}
+                </small>
+              {% endif %}                           
               {% if post.updates_count %}
               <div class="edit-info">
 

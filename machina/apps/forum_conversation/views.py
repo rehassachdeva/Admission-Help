@@ -840,4 +840,35 @@ def PostDownvoteView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
                 'slug': topic_slug,
                 'pk': topic_pk}), pk)
     messages.success(request, success_message)
+    return HttpResponseRedirect(success_url)
+
+def PostFlagView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.flaggers.add(request.user)
+    post.flag_count += 1
+    post.save()
+    success_message = _('This message has been flagged successfully.')
+    success_url = '{0}?post={1}#{1}'.format(
+            reverse('forum_conversation:topic', kwargs={
+                'forum_slug': forum_slug,
+                'forum_pk': forum_pk,
+                'slug': topic_slug,
+                'pk': topic_pk}), pk)
+    messages.success(request, success_message)
+    return HttpResponseRedirect(success_url)
+
+def PostUnflagView(request, forum_slug, forum_pk, topic_slug, topic_pk, pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.flaggers.remove(request.user)
+    post.flag_count -= 1
+    post.save()    
+    success_message = _('This message has been unflagged successfully.')
+    success_url = '{0}?post={1}#{1}'.format(
+            reverse('forum_conversation:topic', kwargs={
+                'forum_slug': forum_slug,
+                'forum_pk': forum_pk,
+                'slug': topic_slug,
+                'pk': topic_pk}), pk)
+    messages.success(request, success_message)
     return HttpResponseRedirect(success_url)    
+

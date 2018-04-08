@@ -12,6 +12,8 @@ from machina.core.app import Application
 from machina.core.loading import get_class
 from .views import PostUpvoteView
 from .views import PostDownvoteView
+from .views import PostFlagView
+from .views import PostUnflagView
 
 
 class BaseConversationApp(Application):
@@ -44,7 +46,11 @@ class BaseConversationApp(Application):
             url(_(r'^topic/(?P<topic_slug>[\w-]+)-(?P<topic_pk>\d+)/(?P<pk>\d+)/post/upvote/$'),
                 PostUpvoteView, name='post_upvote'),  
             url(_(r'^topic/(?P<topic_slug>[\w-]+)-(?P<topic_pk>\d+)/(?P<pk>\d+)/post/downvote/$'),
-                PostDownvoteView, name='post_downvote'),                          
+                PostDownvoteView, name='post_downvote'),
+            url(_(r'^topic/(?P<topic_slug>[\w-]+)-(?P<topic_pk>\d+)/(?P<pk>\d+)/post/flag/$'),
+                PostFlagView, name='post_flag'),  
+            url(_(r'^topic/(?P<topic_slug>[\w-]+)-(?P<topic_pk>\d+)/(?P<pk>\d+)/post/unflag/$'),
+                PostUnflagView, name='post_unflag'),                                           
         ]
 
         urls += [

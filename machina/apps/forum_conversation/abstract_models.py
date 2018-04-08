@@ -253,7 +253,15 @@ class AbstractPost(DatedModel):
         blank=True, verbose_name=_('Upvoters'))   
 
     vote_count = models.PositiveIntegerField(
-        verbose_name=_('Vote count'), editable=False, blank=True, default=0)         
+        verbose_name=_('Vote count'), editable=False, blank=True, default=0)  
+
+    # Many users can flag to this topic
+    flaggers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name='post_flaggers',
+        blank=True, verbose_name=_('Flaggers'))   
+
+    flag_count = models.PositiveIntegerField(
+        verbose_name=_('Flag count'), editable=False, blank=True, default=0)                  
 
     objects = models.Manager()
     approved_objects = ApprovedManager()
@@ -305,6 +313,14 @@ class AbstractPost(DatedModel):
         if not hasattr(self, '_upvoters'):
             self._upvoters = list(self.upvoters.all())
         return user in self._upvoters
+
+    def has_flagger(self, user):
+        """
+        Returns True if the given user is a flagger of a post
+        """
+        if not hasattr(self, '_flaggers'):
+            self._flaggers = list(self.flaggers.all())
+        return user in self._flaggers        
 
     def clean(self):
         super(AbstractPost, self).clean()

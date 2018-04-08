@@ -116,6 +116,16 @@ class PermissionConfig(object):
             'fields': {'codename': 'can_downvote_posts', 'is_local': True, 'is_global': False, },
             'label': _('Can downvote posts'),
             'scope': 'moderation',
+        },
+        {
+            'fields': {'codename': 'can_flag_posts', 'is_local': True, 'is_global': False, },
+            'label': _('Can flag posts'),
+            'scope': 'moderation',
+        }, 
+        {
+            'fields': {'codename': 'can_unflag_posts', 'is_local': True, 'is_global': False, },
+            'label': _('Can unflag posts'),
+            'scope': 'moderation',            
         },               
         {
             'fields': {'codename': 'can_delete_posts', 'is_local': True, 'is_global': False, },

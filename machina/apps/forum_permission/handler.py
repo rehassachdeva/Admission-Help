@@ -165,7 +165,27 @@ class PermissionHandler(object):
         # to read the related forum. Of course a user can downvote only if they have already
         # upvoted to the considered post.
         return user.is_authenticated and post.has_upvoter(user) \
-            and self._perform_basic_permission_check(post.topic.forum, user, 'can_read_forum')                  
+            and self._perform_basic_permission_check(post.topic.forum, user, 'can_read_forum')     
+
+    def can_flag_post(self, post, user):
+        """
+        Given a forum post, checks whether the user can upvote the latter.
+        """
+        # A user can upvote post if they are authenticated and if they have the permission
+        # to read the related forum. Of course a user can upvote only if they have not already
+        # upvoted to the considered post.
+        return user.is_authenticated and not post.has_flagger(user) \
+            and self._perform_basic_permission_check(post.topic.forum, user, 'can_read_forum') 
+
+    def can_unflag_post(self, post, user):
+        """
+        Given a forum post, checks whether the user can downvote the latter.
+        """
+        # A user can downvote post if they are authenticated and if they have the permission
+        # to read the related forum. Of course a user can downvote only if they have already
+        # upvoted to the considered post.
+        return user.is_authenticated and post.has_flagger(user) \
+            and self._perform_basic_permission_check(post.topic.forum, user, 'can_read_forum')                             
 
     def can_delete_post(self, post, user):
         """
