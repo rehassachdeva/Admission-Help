@@ -54,8 +54,8 @@
       <div class="pull-right controls-link-wrapper">
       {% if not request.user.is_anonymous %}
         <a href="{% url 'forum_member:user_subscriptions' %}" class="btn btn-link"><i class="fa fa-bookmark-o ">&nbsp;</i>{% trans "Subscriptions" %}</a>
-        <a href="{% url 'forum_member:user_notifications' %}" class="btn btn-link"><i class="fa fa-comments-o ">&nbsp;</i>{% trans "View my notifications" %}</a>
-        <a href="{% url 'forum_member:user_posts' request.user.id %}" class="btn btn-link"><i class="fa fa-comments-o ">&nbsp;</i>{% trans "View my messages" %}</a>
+        <a href="{% url 'forum_member:user_notifications' %}" class="btn btn-link"><i class="fa fa-comments-o ">&nbsp;</i>{% trans "Notifications" %}</a>
+        <a href="{% url 'forum_member:user_posts' request.user.id %}" class="btn btn-link"><i class="fa fa fa-envelope ">&nbsp;</i>{% trans "View my messages" %}</a>
       {% endif %}
       {% get_permission 'can_access_moderation_queue' request.user as can_access_moderation_queue %}
       {% if can_access_moderation_queue %}
